@@ -134,7 +134,14 @@
             //Add functionality to allow duplicates
             //False uses normal behavior
             //True allows Duplicate Tags to be used
-            allowDuplicates: false
+            allowDuplicates: false,
+            // on valid tag select
+            tagSelect: function () {
+
+            },
+            onEnter: function(msg) {
+                
+            }
         },
 
         _splitAt: /\ |,/g,
@@ -238,7 +245,7 @@
                     }
                     else {
                         console.log(event, ui);
-                        self._addTag({ label: ui.item.label, value: ui.item.value, type: ui.item.category});
+                        self._addTag({ label: ui.item.label, value: ui.item.value, type: ui.item.type});
                     }
                 }
 
@@ -356,6 +363,10 @@
 
             if (this._isInitKey(pressedKey) && !(this._isTabKey(pressedKey) && this.value === '' && !this.input.data('autoCompleteTag'))) {
                 e.preventDefault();
+                
+                if(pressedKey === this._keys.enter[0] && !this.input.data('autoCompleteTag')){
+                    this.options.onEnter('clicked enter with autocomplete closed');
+                }
 
                 this.input.data('autoCompleteTag', false);
 
@@ -474,6 +485,7 @@
         },
 
         _addTag: function (newTag) {
+            //console.log(newTag);
             if (newTag.label === undefined) { //set label to value to simplify possible use-cases, eg. if we send data from server where title isn't set
                 newTag.label = newTag.value;
             }
@@ -502,6 +514,10 @@
             if (tagExists !== false && !this.options.allowDuplicates) {
                 this._highlightExisting(tagExists);
                 return false;
+            }
+
+            if(this.options.tagSelect) {
+                this.options.tagSelect(newTag);
             }
 
             var tag = this.tag(newTag.label, newTag.value, newTag.type);
@@ -616,6 +632,7 @@
             if (this.options.initialTags.length !== 0) {
                 $(this.options.initialTags).each(function (i, element) {
                     if (typeof element === "object") {
+                        console.log(element);
                         input._addTag({ label: element.label, value: element.value, type: element.type});
                     }
                     else {
@@ -660,7 +677,10 @@
         tags: function () {
             return this.tagsArray;
         },
-
+        adjustPlaceholder: function(msg) {
+            this.element.find('.tagit-input').attr('placeholder', msg);
+            return this;
+        },
         destroy: function () {
             $.Widget.prototype.destroy.apply(this, arguments); // default destroy
             clearTimeout(this.timer);

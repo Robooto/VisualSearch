@@ -1,0 +1,26 @@
+# 6/21/2016
+
+Issues is scope - start with add appointment
+
+Current Task: Start with Verb list
+
+# 6/22/2016
+
+Verbs: { 
+    label: 'verb',
+    type: 'verb'
+    }
+Nouns: {
+    label: 'noun', 
+    type: 'noun',
+    verbs: ['Add', 'Edit'],
+    PrimarySearch: function() {
+        Return first option (patient search or something else)
+    },
+    SecondarySearch: null (or array of options?)
+    // If we use the pills how to we decide what secondary search to use?
+    // do we just pick the order of the search?  Not super user friendly
+    
+},
+actions: {
+    open: 

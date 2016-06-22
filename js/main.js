@@ -42,12 +42,21 @@ var json = {
         open: function (noun) {
             return 'new patient';
         },
-        PrimarySearch: function () {
-            return {
-                label: 'Patient',
-                type: 'PrimarySearch',
-                secondaryTerms: null
-            };
+        PrimarySearch: function (term) {
+            return $.ajax({
+                url: 'https://oa-dev-113.oadomain.com/WebAPI/v1/freeandopen/patients',
+                method: 'GET',
+                async: false,
+                data: {
+                    query: term
+                }
+            }).done(function(data) {
+                return data.responseJSON;
+            })
+            // return [{
+            //     label: 'Patient Test',
+            //     value: 123213
+            // }];
         },
         SecondaryTerms: null
     }
@@ -60,7 +69,11 @@ function getVerbs() {
 }
 
 function getLabels(item, index) {
-    return item.label;
+    return {
+            label: item.label,
+            value: item.label,
+            type: item.type
+    }
 }
 
 function getNounForVerb(verb) {
@@ -89,8 +102,8 @@ function getActionForNoun(noun) {
     })
 }
 
-function getAction(action) {
-    return json.actions[action]();
+function getAction(action, term) {
+    return json.actions[action](term);
 }
 
 var selection = ['Add', 'Patient'];
